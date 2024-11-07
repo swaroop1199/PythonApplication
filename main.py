@@ -6,6 +6,7 @@ import tkinter
 import webbrowser
 import subprocess
 import time
+import PyQt5
 from PyQt5 import QtWidgets, QtGui
 from tkinter import messagebox, StringVar, ttk
 import datetime
