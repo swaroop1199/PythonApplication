@@ -1,21 +1,12 @@
-# Start from an official Python base image
+# Use the official Python image from Docker Hub
 FROM python:3.9-slim
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file to the container
-COPY requirements.txt .
+# Copy the Python script into the container
+COPY AppPy.py .
 
-# Install dependencies in a virtual environment
-RUN python -m venv /app/venv && \
-    . /app/venv/bin/activate && \
-    pip install --upgrade pip && \
-    pip install -r requirements.txt
-
-# Copy the Python application code into the container
-COPY . .
-
-# Activate the virtual environment and run the script
-CMD ["/bin/bash", "-c", "source /app/venv/bin/activate && python AppPy.py"]
+# Run the Python script when the container launches
+CMD ["python", "AppPy.py"]
 
