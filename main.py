@@ -277,5 +277,10 @@ def appcore():
 
     win.mainloop()
 
-
+if __name__ == "__main__":
+    if "jenkins" in sys.argv:  # You can pass this argument in Jenkins or check other environment conditions
+        print("Running in Jenkins, skipping GUI...")
+        # You can do the testing or any non-GUI operations here
+    else:
+        appcore()  # Run the GUI if not in Jenkins
 
