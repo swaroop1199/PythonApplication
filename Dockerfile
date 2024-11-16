@@ -9,4 +9,3 @@ COPY AppPy.py .
 
 # Run the Python script when the container launches
 CMD ["python", "AppPy.py"]
-
