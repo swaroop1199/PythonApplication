@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the Python script into the container
-COPY AppPy.py .
+COPY ../../AppPy.py .
 
 # Run the Python script when the container launches
 CMD ["python", "AppPy.py"]
