@@ -1,37 +1,220 @@
-name: Docker Build and Push
+name: Docker Build and Deploy
 
 on:
-  push:
-    branches: ["master"]
 
+  # Automatically run when code is pushed
+  push:
+    branches:
+      - master
+
+  # Allow Slack /deploy to trigger this workflow
   workflow_dispatch:
 
+    inputs:
+
+      environment:
+        description: "Environment to deploy"
+        required: true
+        type: choice
+
+        options:
+          - dev
+          - qa
+          - uat
+          - prod
+
+
 jobs:
-  docker:
+
+  # ==========================================================
+  # BUILD
+  # ==========================================================
+
+  build:
+
+    name: Build Docker Image
+
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v4
 
+
       - name: Build Docker image
-        run: docker build -t my-python-app:latest .
+        run: |
+          docker build \
+            -t my-python-app:latest \
+            .
+
+
+  # ==========================================================
+  # TEST
+  # ==========================================================
+
+  test:
+
+    name: Run Container Test
+
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t my-python-app:latest \
+            .
+
 
       - name: Run Docker container
-        run: docker run --rm my-python-app:latest
+        run: |
+          docker run \
+            --rm \
+            my-python-app:latest
+
+
+  # ==========================================================
+  # DOCKER PUSH
+  # ==========================================================
+
+  push:
+
+    name: Push Docker Image
+
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t my-python-app:latest \
+            .
+
+
+      # ------------------------------------------------------
+      # LOGIN TO DOCKER HUB
+      # ------------------------------------------------------
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
+
         with:
+
           username: ${{ secrets.DOCKERHUB_USERNAME }}
+
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Tag image
+
+      # ------------------------------------------------------
+      # TAG IMAGE
+      # ------------------------------------------------------
+
+      - name: Tag Docker image
         run: |
-          docker tag my-python-app:latest \
+          docker tag \
+            my-python-app:latest \
             ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
 
-      - name: Push image
+
+      # ------------------------------------------------------
+      # PUSH IMAGE
+      # ------------------------------------------------------
+
+      - name: Push Docker image
         run: |
           docker push \
             ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
+
+
+  # ==========================================================
+  # DEPLOY
+  # ==========================================================
+
+  deploy:
+
+    name: Deploy to ${{ inputs.environment }}
+
+    needs: push
+
+    runs-on: ubuntu-latest
+
+    # ========================================================
+    # GITHUB ENVIRONMENT
+    # ========================================================
+
+    environment:
+
+      name: ${{ inputs.environment }}
+
+
+    steps:
+
+      - name: Show deployment environment
+        run: |
+          echo "======================================"
+          echo "Deploying application"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "======================================"
+
+
+      # ------------------------------------------------------
+      # DEV
+      # ------------------------------------------------------
+
+      - name: Deploy DEV
+        if: inputs.environment == 'dev'
+        run: |
+          echo "🚀 Deploying to DEV"
+          echo "Docker image:"
+          echo "${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest"
+
+
+      # ------------------------------------------------------
+      # QA
+      # ------------------------------------------------------
+
+      - name: Deploy QA
+        if: inputs.environment == 'qa'
+        run: |
+          echo "🚀 Deploying to QA"
+          echo "Docker image:"
+          echo "${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest"
+
+
+      # ------------------------------------------------------
+      # UAT
+      # ------------------------------------------------------
+
+      - name: Deploy UAT
+        if: inputs.environment == 'uat'
+        run: |
+          echo "🚀 Deploying to UAT"
+          echo "Docker image:"
+          echo "${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest"
+
+
+      # ------------------------------------------------------
+      # PROD
+      # ------------------------------------------------------
+
+      - name: Deploy PROD
+        if: inputs.environment == 'prod'
+        run: |
+          echo "🚀 Deploying to PROD"
+          echo "Docker image:"
+          echo "${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest"
