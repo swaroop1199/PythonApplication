@@ -1,4 +1,4 @@
-name: Docker Build and Run
+name: Docker Build, Run and Push
 
 on:
   push:
@@ -9,11 +9,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # Stage 1 - Checkout
       - name: Checkout code
         uses: actions/checkout@v4
 
+
+      # Stage 2 - Build Docker Image
       - name: Build Docker image
         run: docker build -t my-python-app .
 
+
+      # Stage 3 - Run Container
       - name: Run Docker container
         run: docker run --rm my-python-app
+
+
+      # Stage 4 - Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+
+      # Stage 5 - Tag Image
+      - name: Tag Docker image
+        run: |
+          docker tag my-python-app:latest \
+            ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
+
+
+      # Stage 6 - Push Image
+      - name: Push Docker image
+        run: |
+          docker push \
+            ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
