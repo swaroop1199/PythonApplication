@@ -17,12 +17,12 @@ jobs:
 
       # Stage 2 - Build Docker Image
       - name: Build Docker image
-        run: docker build -t buildAndPackage .
+        run: docker build -t buildandpackage .
 
 
       # Stage 3 - Run Container
       - name: Run Docker container
-        run: docker run --rm buildAndPackage
+        run: docker run --rm buildandpackage
 
 
       # Stage 4 - Login to Docker Hub
@@ -36,12 +36,12 @@ jobs:
       # Stage 5 - Tag Image
       - name: Tag Docker image
         run: |
-          docker tag buildAndPackage:latest \
-            ${{ secrets.DOCKERHUB_USERNAME }}/buildAndPackage:latest
+          docker tag buildandpackage:latest \
+            ${{ secrets.DOCKERHUB_USERNAME }}/buildandpackage:latest
 
 
       # Stage 6 - Push Image
       - name: Push Docker image
         run: |
           docker push \
-            ${{ secrets.DOCKERHUB_USERNAME }}/buildAndPackage:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/buildandpackage:latest
