@@ -5,7 +5,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  Docker CI-CD Pipeline:
+  Docker CICD Pipeline:
     runs-on: ubuntu-latest
 
     steps:
