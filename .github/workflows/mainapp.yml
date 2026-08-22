@@ -1,8 +1,8 @@
-name: Docker Build
+name: Docker Build and Run
 
 on:
   push:
-    branches: [ "master" ] 
+    branches: [ "master" ]
 
 jobs:
   docker:
@@ -14,3 +14,6 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t my-python-app .
+
+      - name: Run Docker container
+        run: docker run --rm my-python-app
