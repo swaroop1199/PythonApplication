@@ -17,12 +17,12 @@ jobs:
 
       # Stage 2 - Build Docker Image
       - name: Build Docker image
-        run: docker build -t my-python-app .
+        run: docker build -t BuildAndPackage .
 
 
       # Stage 3 - Run Container
       - name: Run Docker container
-        run: docker run --rm my-python-app
+        run: docker run --rm BuildAndPackage
 
 
       # Stage 4 - Login to Docker Hub
@@ -36,12 +36,12 @@ jobs:
       # Stage 5 - Tag Image
       - name: Tag Docker image
         run: |
-          docker tag my-python-app:latest \
-            ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
+          docker tag BuildAndPackage:latest \
+            ${{ secrets.DOCKERHUB_USERNAME }}/BuildAndPackage:latest
 
 
       # Stage 6 - Push Image
       - name: Push Docker image
         run: |
           docker push \
-            ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/BuildAndPackage:latest
