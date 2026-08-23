@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker:
+  Docker_CICD_Pipeline:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,10 +15,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t my-python-app:latest .
+        run: docker build -t buildandpackage:latest .
 
       - name: Run Docker container
-        run: docker run --rm my-python-app:latest
+        run: docker run --rm buildandpackage:latest
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -28,10 +28,10 @@ jobs:
 
       - name: Tag image
         run: |
-          docker tag my-python-app:latest \
-            ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
+          docker tag buildandpackage:latest \
+            ${{ secrets.DOCKERHUB_USERNAME }}/buildandpackage:latest
 
       - name: Push image
         run: |
           docker push \
-            ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/buildandpackage:latest
